@@ -1,6 +1,7 @@
 import { fetchFeatures } from "./ml_model_features.controller.js";
+import { supabase } from "../config/supabase.js";
 
-const predict = async () => {
+const predict = async (req,res) => {
   try {
     // Fetch features from your weather controller
     const { solarFeatures, totalFeatures } = await fetchFeatures();
@@ -67,12 +68,28 @@ const totalFeaturesArray = [
     const predictions = JSON.parse(text);
 
     return res.status(200).json(predictions)
-    
+
   } catch (error) {
     console.error("Error calling prediction server:", error);
     return null
     // res.status(500).json({ error: error.message });
   }
 };
+
+
+const predictAndSave24Hr = async(req,res)=>{
+  //first we will check that for todays prediction has been done or not 
+  //we will do this by checking todays date and 0 hr entry present or not
+  //if present we will do nothing
+  //if not present then we will use function to predict the energy 
+  //energy will be predicted for each hour then it will be saved in the database until 24 hr
+
+  const {data,error} = await supabase.
+  from('Total_Energy_Dataset')
+  .select('*')
+  .gt('time',)
+}
+
+
 
 export {predict}
