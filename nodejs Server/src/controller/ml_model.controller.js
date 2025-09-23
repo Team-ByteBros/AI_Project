@@ -1,6 +1,138 @@
 import { fetchFeatures } from "./ml_model_features.controller.js";
 import { supabase } from "../config/supabase.js";
 
+
+
+const getCurrentHourEnergyPrediction = async(req,res) =>{
+  //first will get call to 24hr save function it will check if the predictions are saved or not
+  // if not first predictions will get generated will be stored
+  //then in supabase get the data for current hour
+
+  try {
+    await predictAndSave24Hr()
+
+  // Get current UTC date and hour
+    const now = new Date();
+    const currentUTCHour = new Date(Date.UTC(
+      now.getUTCFullYear(),
+      now.getUTCMonth(),
+      now.getUTCDate(),
+      now.getUTCHours(), 0, 0, 0
+    ));
+    const currentHourISO = currentUTCHour.toISOString(); 
+
+  const {data : totalEnergy,error} = await supabase
+  .from('Total_Energy_Dataset')
+  .select('Total','time')
+  .eq('time',currentHourISO)
+
+  if(error){
+    return res.status(500).json({
+      message : "error while fetching 1 hr data",
+      error : error.message
+    })
+  }
+
+  const {data : solarEnergy , error : solarError} = await supabase
+  .from('Solar_Dataset')
+  .select('Solar','time')
+  .eq('time',currentHourISO)
+
+  if(solarError){
+    return res.status(500).json({
+      message : "error while fetching 1 hr data",
+      error : solarError.message
+    })
+  }
+
+
+  return res.status(200).json({
+    totalEnergy,
+    solarEnergy
+  })
+    
+  } catch (error) {
+    return res.status(500).json({
+      message : "error while fetching 1 hr data",
+      error : error.message
+    })
+    
+  }
+  
+} 
+
+const getPredictionOf24Hours = async (req,res)=>{
+  //first will check if the values exist or not
+  //if not it will create prediction
+  //it will check for 24 hours data for that day
+  //then it will send to the user
+
+  try {
+  await predictAndSave24Hr()
+    // Get current UTC date
+     const now = new Date();
+
+    const startOfDayUTC = new Date(Date.UTC(
+      now.getUTCFullYear(),
+      now.getUTCMonth(),
+      now.getUTCDate(), 0, 0, 0
+    ));
+    const endOfDayUTC = new Date(Date.UTC(
+      now.getUTCFullYear(),
+      now.getUTCMonth(),
+      now.getUTCDate(), 23, 0, 0
+    ));
+
+    const startISO = startOfDayUTC.toISOString(); // e.g. 2025-09-24T00:00:00.000Z
+    const endISO = endOfDayUTC.toISOString();     // e.g., "2025-09-23T23:00:00.000Z"
+
+    const {data : totalEnergyData, error : totalEnergyError} = await supabase
+    .from('Total_Energy_Dataset')
+    .select('Total','time')
+    .gte('time',startISO)
+    .lte('time',endISO)
+    .order('time',{ascending : true})
+
+    if(totalEnergyError){
+    return res.status(500).json({
+      message : "error while fetching 24 hr data",
+      error : totalEnergyError.message
+    })
+  }
+
+    const {data : solarData, error : solarError} = await supabase
+    .from('Solar_Dataset')
+    .select('Solar','time')
+    .gte('time',startISO)
+    .lte('time',endISO)
+    .order('time',{ascending : true})
+
+    if(solarError){
+    return res.status(500).json({
+      message : "error while fetching 24 hr data",
+      error : solarError.message
+    })
+  }
+
+    return res.status(200).json({
+      totalEnergyData,
+      solarData
+    })
+
+    
+  } catch (error) {
+    
+     return res.status(500).json({
+      message : "error while fetching 24 hr data",
+      error : error.message
+    })
+  }
+
+
+
+}
+
+
 const predict = async (hour) => {
   try {
     // Fetch features from your weather controller
@@ -72,7 +204,7 @@ const predict = async (hour) => {
   }
 };
 
-const predictAndSave24Hr = async (req, res) => {
+const predictAndSave24Hr = async () => {
   //first we will check that for todays prediction has been done or not //to get todays time in UTC created function
   //we will do this by checking todays date and 0 hr entry present or not
   //if present we will do nothing
@@ -87,7 +219,7 @@ const predictAndSave24Hr = async (req, res) => {
     console.log("data", data);
 
     if (data.length>0 && data) {
-      return res.status(200).json("data is available in database");
+      return {message : "data is available in database"}
     }
 
     for (let hour = 0; hour < 24; hour++) {
@@ -146,11 +278,12 @@ const predictAndSave24Hr = async (req, res) => {
         ])
 
     }
-    return res.status(200).json({message : "successfully save in database"});
+    return {message : "successfully save in database"};
   } catch (error) {
-    return res.status(500).json({ error: error.message });
+    return { error: error.message };
   }
 };
+
 
 function getUTCDateTime() {
   const now = new Date();
@@ -162,4 +295,4 @@ function getUTCDateTime() {
   return `${year}-${month}-${day} 00:00:00+00`;
 }
 
-export { predict, predictAndSave24Hr };
+export { predict, predictAndSave24Hr ,getCurrentHourEnergyPrediction , getPredictionOf24Hours};
