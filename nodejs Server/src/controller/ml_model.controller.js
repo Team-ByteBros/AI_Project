@@ -1,0 +1,78 @@
+import { fetchFeatures } from "./ml_model_features.controller.js";
+
+const predict = async () => {
+  try {
+    // Fetch features from your weather controller
+    const { solarFeatures, totalFeatures } = await fetchFeatures();
+    if (!solarFeatures || !totalFeatures) {
+  return res.status(503).json({ error: "Features not ready. Please retry." });
+}
+
+  const solarFeaturesArray = [
+  solarFeatures.humidity,
+  solarFeatures.sealevelpressure,
+  solarFeatures.visibility,
+  solarFeatures.solarradiation,
+  solarFeatures.solarenergy,
+  solarFeatures.uvindex,
+  solarFeatures.Solar_rolling3,
+  solarFeatures.Solar_lag1,
+  solarFeatures.Solar_lag24,
+  solarFeatures.hour,
+  solarFeatures.time_of_day_morning,
+  solarFeatures.time_of_day_afternoon,
+  solarFeatures.time_of_day_evening,
+  solarFeatures.time_of_day_night,
+  solarFeatures.conditions_Clear,
+  solarFeatures.conditions_Overcast,
+  solarFeatures.conditions_Partially_cloudy,
+  solarFeatures.conditions_Rain_Overcast,
+  solarFeatures.conditions_Rain_Partially_cloudy,
+];
+
+
+const totalFeaturesArray = [
+  totalFeatures.sealevelpressure,
+  totalFeatures.humidity,
+  totalFeatures.Total_rolling3,
+  totalFeatures.Total_lag1,
+  totalFeatures.Total_lag24,
+  totalFeatures.hour,
+  totalFeatures.time_of_day_morning,
+  totalFeatures.time_of_day_afternoon,
+  totalFeatures.time_of_day_evening,
+  totalFeatures.time_of_day_night,
+];
+
+
+
+    // Log arrays to check before sending
+    // console.log("Solar Features Array:", solarFeaturesArray);
+    // console.log("Total Features Array:", totalFeaturesArray);
+
+    const response = await fetch("http://127.0.0.1:8000/predict", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        solar_features: solarFeaturesArray,
+        total_features: totalFeaturesArray,
+      }),
+    });
+
+    // Log raw text if JSON parse fails
+    const text = await response.text();
+    console.log("FastAPI response:", text);
+
+    // Parse JSON only if valid
+    const predictions = JSON.parse(text);
+
+    return res.status(200).json(predictions)
+    
+  } catch (error) {
+    console.error("Error calling prediction server:", error);
+    return null
+    // res.status(500).json({ error: error.message });
+  }
+};
+
+export {predict}
