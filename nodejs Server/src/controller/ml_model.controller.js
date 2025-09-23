@@ -78,18 +78,38 @@ const totalFeaturesArray = [
 
 
 const predictAndSave24Hr = async(req,res)=>{
-  //first we will check that for todays prediction has been done or not 
+  //first we will check that for todays prediction has been done or not //to get todays time in UTC created function
   //we will do this by checking todays date and 0 hr entry present or not
   //if present we will do nothing
   //if not present then we will use function to predict the energy 
   //energy will be predicted for each hour then it will be saved in the database until 24 hr
 
-  const {data,error} = await supabase.
+  try {
+     const {data,error} = await supabase.
   from('Total_Energy_Dataset')
   .select('*')
-  .gt('time',)
+  .gt('time',getUTCDateTime())
+
+  } catch (error) {
+    
+  }
+ 
+
+}
+
+function getUTCDateTime() {
+  const now = new Date();
+
+  const year = now.getUTCFullYear();
+  const month = String(now.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(now.getUTCDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day} 00:00:00+00`;
 }
 
 
 
-export {predict}
+
+
+
+export {predict,predictAndSave24Hr}
