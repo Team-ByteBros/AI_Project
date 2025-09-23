@@ -2,14 +2,14 @@ import { getWeatherData } from "./weather.controller.js";
 import { json } from "express";
 import { supabase } from "../config/supabase.js";
 
-const fetchFeatures = async () => {
+const fetchFeatures = async (hour) => {
 
   try {
 
     const data = await getWeatherData()
 
-    const now = new Date();
-    const hour = now.getHours();
+    // const now = new Date();
+    // const hour = now.getHours();
 
     // Find the weather data for the current hour
     const todayHours = data.days[0].hours;

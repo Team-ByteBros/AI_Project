@@ -37,6 +37,6 @@ async def predict(data: PredictionInput):
     total_pred = float(total_pred)
 
     return {
-        "solar_prediction": solar_pred,
-        "total_prediction": total_pred
+        "solar_prediction": max(0,solar_pred),
+        "total_prediction": max(0,total_pred)
     }
