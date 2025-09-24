@@ -3,6 +3,8 @@ from pydantic import BaseModel
 from typing import List
 import joblib
 import numpy as np
+from fastapi.middleware.cors import CORSMiddleware
+
 
 import os
 import uvicorn
@@ -15,6 +17,15 @@ if __name__ == "__main__":
 # uvicorn main:app --reload command to start the server
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 # Load models on startup
 solar_model = joblib.load('models/solar_model.joblib')
