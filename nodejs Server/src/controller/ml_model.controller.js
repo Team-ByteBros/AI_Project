@@ -1,137 +1,197 @@
 import { fetchFeatures } from "./ml_model_features.controller.js";
 import { supabase } from "../config/supabase.js";
 
-
-
-const getCurrentHourEnergyPrediction = async(req,res) =>{
+const getCurrentHourEnergyPrediction = async (req, res) => {
   //first will get call to 24hr save function it will check if the predictions are saved or not
   // if not first predictions will get generated will be stored
   //then in supabase get the data for current hour
 
   try {
-    await predictAndSave24Hr()
+    await predictAndSave24Hr();
 
-  // Get current UTC date and hour
+    // Get current UTC date and hour
     const now = new Date();
-    const currentUTCHour = new Date(Date.UTC(
-      now.getUTCFullYear(),
-      now.getUTCMonth(),
-      now.getUTCDate(),
-      now.getUTCHours(), 0, 0, 0
-    ));
-    const currentHourISO = currentUTCHour.toISOString(); 
+    const currentUTCHour = new Date(
+      Date.UTC(
+        now.getUTCFullYear(),
+        now.getUTCMonth(),
+        now.getUTCDate(),
+        now.getUTCHours(),
+        0,
+        0,
+        0
+      )
+    );
+    const currentHourISO = currentUTCHour.toISOString();
 
-  const {data : totalEnergy,error} = await supabase
-  .from('Total_Energy_Dataset')
-  .select('Total','time')
-  .eq('time',currentHourISO)
+    const { data: totalEnergy, error } = await supabase
+      .from("Total_Energy_Dataset")
+      .select("Total", "time")
+      .eq("time", currentHourISO);
 
-  if(error){
-    return res.status(500).json({
-      message : "error while fetching 1 hr data",
-      error : error.message
-    })
-  }
+    if (error) {
+      return res.status(500).json({
+        message: "error while fetching 1 hr data",
+        error: error.message,
+      });
+    }
 
-  const {data : solarEnergy , error : solarError} = await supabase
-  .from('Solar_Dataset')
-  .select('Solar','time')
-  .eq('time',currentHourISO)
+    const { data: solarEnergy, error: solarError } = await supabase
+      .from("Solar_Dataset")
+      .select("Solar", "time")
+      .eq("time", currentHourISO);
 
-  if(solarError){
-    return res.status(500).json({
-      message : "error while fetching 1 hr data",
-      error : solarError.message
-    })
-  }
+    if (solarError) {
+      return res.status(500).json({
+        message: "error while fetching 1 hr data",
+        error: solarError.message,
+      });
+    }
 
-
-  return res.status(200).json({
-    totalEnergy,
-    solarEnergy
-  })
-    
+    return res.status(200).json({
+      totalEnergy,
+      solarEnergy,
+    });
   } catch (error) {
     return res.status(500).json({
-      message : "error while fetching 1 hr data",
-      error : error.message
-    })
-    
+      message: "error while fetching 1 hr data",
+      error: error.message,
+    });
   }
-  
-} 
+};
 
-const getPredictionOf24Hours = async (req,res)=>{
+const getPredictionOf24Hours = async (req, res) => {
   //first will check if the values exist or not
   //if not it will create prediction
   //it will check for 24 hours data for that day
   //then it will send to the user
 
   try {
-  await predictAndSave24Hr()
+    await predictAndSave24Hr();
     // Get current UTC date
-     const now = new Date();
+    const now = new Date();
 
-    const startOfDayUTC = new Date(Date.UTC(
-      now.getUTCFullYear(),
-      now.getUTCMonth(),
-      now.getUTCDate(), 0, 0, 0
-    ));
-    const endOfDayUTC = new Date(Date.UTC(
-      now.getUTCFullYear(),
-      now.getUTCMonth(),
-      now.getUTCDate(), 23, 0, 0
-    ));
+    const startOfDayUTC = new Date(
+      Date.UTC(
+        now.getUTCFullYear(),
+        now.getUTCMonth(),
+        now.getUTCDate(),
+        0,
+        0,
+        0
+      )
+    );
+    const endOfDayUTC = new Date(
+      Date.UTC(
+        now.getUTCFullYear(),
+        now.getUTCMonth(),
+        now.getUTCDate(),
+        23,
+        0,
+        0
+      )
+    );
 
     const startISO = startOfDayUTC.toISOString(); // e.g. 2025-09-24T00:00:00.000Z
-    const endISO = endOfDayUTC.toISOString();     // e.g., "2025-09-23T23:00:00.000Z"
+    const endISO = endOfDayUTC.toISOString(); // e.g., "2025-09-23T23:00:00.000Z"
 
-    const {data : totalEnergyData, error : totalEnergyError} = await supabase
-    .from('Total_Energy_Dataset')
-    .select('Total','time')
-    .gte('time',startISO)
-    .lte('time',endISO)
-    .order('time',{ascending : true})
+    const { data: totalEnergyData, error: totalEnergyError } = await supabase
+      .from("Total_Energy_Dataset")
+      .select("Total", "time")
+      .gte("time", startISO)
+      .lte("time", endISO)
+      .order("time", { ascending: true });
 
-    if(totalEnergyError){
-    return res.status(500).json({
-      message : "error while fetching 24 hr data",
-      error : totalEnergyError.message
-    })
-  }
+    if (totalEnergyError) {
+      return res.status(500).json({
+        message: "error while fetching 24 hr data",
+        error: totalEnergyError.message,
+      });
+    }
 
-    const {data : solarData, error : solarError} = await supabase
-    .from('Solar_Dataset')
-    .select('Solar','time')
-    .gte('time',startISO)
-    .lte('time',endISO)
-    .order('time',{ascending : true})
+    const { data: solarData, error: solarError } = await supabase
+      .from("Solar_Dataset")
+      .select("Solar", "time")
+      .gte("time", startISO)
+      .lte("time", endISO)
+      .order("time", { ascending: true });
 
-    if(solarError){
-    return res.status(500).json({
-      message : "error while fetching 24 hr data",
-      error : solarError.message
-    })
-  }
+    if (solarError) {
+      return res.status(500).json({
+        message: "error while fetching 24 hr data",
+        error: solarError.message,
+      });
+    }
 
     return res.status(200).json({
       totalEnergyData,
-      solarData
-    })
-
-    
+      solarData,
+    });
   } catch (error) {
-    
-     return res.status(500).json({
-      message : "error while fetching 24 hr data",
-      error : error.message
-    })
+    return res.status(500).json({
+      message: "error while fetching 24 hr data",
+      error: error.message,
+    });
   }
+};
+
+const getPredictionDataPast7days = async (req, res) => {
+  try {
+    //first get time of now
+    //get time of 7 day before
+    //fetch hourly data of each day
+
+    const now = new Date();
+
+    const pastdate = new Date();
+    pastdate.setDate(now.getDate() - 7);
+
+    const { data: totalData, error: totalError } = await supabase
+      .from("Total_Energy_Dataset")
+      .select("time, Total")
+      .gte("time", pastdate.toISOString())
+      .lte("time", now.toISOString())
+      .order("time", { ascending: true });
+
+    const formatted = totalData?.map((row) => {
+      const date = new Date(row.time);
+      return {
+        day: date.toISOString().split("T")[0], // YYYY-MM-DD
+        hour: date.getHours(), // 0–23
+        total: row.Total,
+      };
+    });
+
+    const sorted = formatted.sort((a, b) => {
+  if (a.day === b.day) {
+    return a.hour - b.hour; // same day → sort by hour
+  }
+  return new Date(a.day) - new Date(b.day); // different day → sort by date
+});
+
+    // assume `formatted` is already sorted by day/hour
+const grouped = sorted.reduce((acc, row) => {
+  if (!acc[row.day]) {
+    acc[row.day] = []; // create array if new date
+  }
+  acc[row.day].push({
+    hour: row.hour,
+    total: row.total
+  });
+  return acc;
+}, {});
 
 
-
-}
-
+    return res.status(200).json({
+      grouped
+    });
+  } catch (error) {
+    return res.status(500).json({
+      error: "error while fetching 7 days data",
+      message: error.message,
+    });
+  }
+};
 
 const predict = async (hour) => {
   try {
@@ -180,14 +240,17 @@ const predict = async (hour) => {
     // console.log("Solar Features Array:", solarFeaturesArray);
     // console.log("Total Features Array:", totalFeaturesArray);
 
-    const response = await fetch("https://ai-project-jgzr.onrender.com/predict", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        solar_features: solarFeaturesArray,
-        total_features: totalFeaturesArray,
-      }),
-    });
+    const response = await fetch(
+      "https://ai-project-jgzr.onrender.com/predict",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          solar_features: solarFeaturesArray,
+          total_features: totalFeaturesArray,
+        }),
+      }
+    );
 
     // Log raw text if JSON parse fails
     const text = await response.text();
@@ -218,12 +281,13 @@ const predictAndSave24Hr = async () => {
       .gt("time", getUTCDateTime());
     console.log("data", data);
 
-    if (data.length>0 && data) {
-      return {message : "data is available in database"}
+    if (data.length > 0 && data) {
+      return { message: "data is available in database" };
     }
 
     for (let hour = 0; hour < 24; hour++) {
-      const { predictions, solarFeaturesArray, totalFeaturesArray } = await predict(hour);
+      const { predictions, solarFeaturesArray, totalFeaturesArray } =
+        await predict(hour);
       // Build UTC time for each hour
       const now = new Date();
       const dateStr = `${now.getUTCFullYear()}-${String(
@@ -234,7 +298,7 @@ const predictAndSave24Hr = async () => {
         "0"
       )}:00:00+00`;
 
-      const { data : totalenergydata, error : totalenergyerror} = await supabase
+      const { data: totalenergydata, error: totalenergyerror } = await supabase
         .from("Total_Energy_Dataset")
         .insert([
           {
@@ -253,37 +317,35 @@ const predictAndSave24Hr = async () => {
           },
         ]);
 
-        const {data : solarData,error : solarError} = await supabase
-        .from('Solar_Dataset')
+      const { data: solarData, error: solarError } = await supabase
+        .from("Solar_Dataset")
         .insert([
           {
-          time: timeForHour,
-          Solar: predictions.solar_prediction,        // predicted solar energy
-          humidity: solarFeaturesArray[0],
-          sealevelpressure: solarFeaturesArray[1],
-          visibility: solarFeaturesArray[2],
-          solarradiation: solarFeaturesArray[3],
-          solarenergy: solarFeaturesArray[4],
-          uvindex: solarFeaturesArray[5],
-          conditions: solarFeaturesArray.slice(14, 19).join(","), // conditions_Clear, Overcast, etc.
-          Solar_rolling3: solarFeaturesArray[6],
-          Solar_lag1: solarFeaturesArray[7],
-          Solar_lag24: solarFeaturesArray[8],
-          hour: solarFeaturesArray[9],
-          time_of_day_morning: solarFeaturesArray[10],
-          time_of_day_afternoon: solarFeaturesArray[11],
-          time_of_day_evening: solarFeaturesArray[12],
-          time_of_day_night: solarFeaturesArray[13],
-        },
-        ])
-
+            time: timeForHour,
+            Solar: predictions.solar_prediction, // predicted solar energy
+            humidity: solarFeaturesArray[0],
+            sealevelpressure: solarFeaturesArray[1],
+            visibility: solarFeaturesArray[2],
+            solarradiation: solarFeaturesArray[3],
+            solarenergy: solarFeaturesArray[4],
+            uvindex: solarFeaturesArray[5],
+            conditions: solarFeaturesArray.slice(14, 19).join(","), // conditions_Clear, Overcast, etc.
+            Solar_rolling3: solarFeaturesArray[6],
+            Solar_lag1: solarFeaturesArray[7],
+            Solar_lag24: solarFeaturesArray[8],
+            hour: solarFeaturesArray[9],
+            time_of_day_morning: solarFeaturesArray[10],
+            time_of_day_afternoon: solarFeaturesArray[11],
+            time_of_day_evening: solarFeaturesArray[12],
+            time_of_day_night: solarFeaturesArray[13],
+          },
+        ]);
     }
-    return {message : "successfully save in database"};
+    return { message: "successfully save in database" };
   } catch (error) {
     return { error: error.message };
   }
 };
-
 
 function getUTCDateTime() {
   const now = new Date();
@@ -295,4 +357,10 @@ function getUTCDateTime() {
   return `${year}-${month}-${day} 00:00:00+00`;
 }
 
-export { predict, predictAndSave24Hr ,getCurrentHourEnergyPrediction , getPredictionOf24Hours};
+export {
+  predict,
+  predictAndSave24Hr,
+  getCurrentHourEnergyPrediction,
+  getPredictionOf24Hours,
+  getPredictionDataPast7days,
+};
