@@ -195,6 +195,15 @@ const grouped = sorted.reduce((acc, row) => {
 
 const predict = async (hour) => {
   try {
+     const fastApiBaseUrl = "https://ai-project-jgzr.onrender.com";
+
+    // Step 1: Wake FastAPI server
+    console.log("Waking FastAPI server...");
+    await fetch(fastApiBaseUrl);
+
+    // Step 2: Wait a short moment for server to start
+    await new Promise(res => setTimeout(res, 3000)); // wait 3 seconds
+
     // Fetch features from your weather controller
     const { solarFeatures, totalFeatures } = await fetchFeatures(hour);
     if (!solarFeatures || !totalFeatures) {
