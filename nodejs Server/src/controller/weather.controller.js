@@ -1,8 +1,8 @@
 
 //weather api call global
 //3 days data
-const getWeatherData = async()=>{
-  const location = "bangalore";
+const getWeatherData = async(location)=>{
+  // const location = "bangalore";
   
   const startDate = new Date().toISOString().split("T")[0]; // Today's date in YYYY-MM-DD format
   const tempDate = new Date()
@@ -29,7 +29,8 @@ const getWeatherData = async()=>{
 
 //separate api to call for weather features
 const fetchWeather3Days = async(req, res)=>{
-  const data = await getWeatherData()
+  const {location} = req.body
+  const data = await getWeatherData(location)
   return res.status(200).json(
     data
   )
@@ -37,7 +38,8 @@ const fetchWeather3Days = async(req, res)=>{
 
 const fetchWeatherToday = async(req,res) =>{
   try {
-     const data = await getWeatherData()
+    const {location} = req.body
+     const data = await getWeatherData(location)
      const todayDate = new Date().toISOString().split("T")[0]
   const todaydata = data.days.find(day=>day.datetime===todayDate)
   return res.status(200).json(

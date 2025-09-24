@@ -14,7 +14,7 @@ export const wakeMLServer = async () => {
 
     console.log("[ML Server] Wake request sent successfully. Waiting for server to start...");
     await new Promise(res => setTimeout(res, 5000)); // wait 5 seconds
-    console.log("[ML Server] ML server should now be awake ✅");
+    console.log("[ML Server] ML server should now be awake ");
     return true;
   } catch (error) {
     console.error("[ML Server] Error waking server:", error);

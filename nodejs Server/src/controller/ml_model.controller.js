@@ -7,7 +7,8 @@ const getCurrentHourEnergyPrediction = async (req, res) => {
   //then in supabase get the data for current hour
 
   try {
-    await predictAndSave24Hr();
+    const {location} = req.body
+    await predictAndSave24Hr(location);
 
     // Get current UTC date and hour
     const now = new Date();
@@ -67,7 +68,8 @@ const getPredictionOf24Hours = async (req, res) => {
   //then it will send to the user
 
   try {
-    await predictAndSave24Hr();
+    const {location} = req.body
+    await predictAndSave24Hr(location);
     // Get current UTC date
     const now = new Date();
 
@@ -193,7 +195,7 @@ const grouped = sorted.reduce((acc, row) => {
   }
 };
 
-const predict = async (hour) => {
+const predict = async (hour,location) => {
   try {
      const fastApiBaseUrl = "https://ai-project-jgzr.onrender.com";
 
@@ -205,7 +207,7 @@ const predict = async (hour) => {
     await new Promise(res => setTimeout(res, 3000)); // wait 3 seconds
 
     // Fetch features from your weather controller
-    const { solarFeatures, totalFeatures } = await fetchFeatures(hour);
+    const { solarFeatures, totalFeatures } = await fetchFeatures(hour,location);
     if (!solarFeatures || !totalFeatures) {
       return json({ error: "Features not ready. Please retry." });
     }
@@ -276,7 +278,7 @@ const predict = async (hour) => {
   }
 };
 
-const predictAndSave24Hr = async () => {
+const predictAndSave24Hr = async (location) => {
   //first we will check that for todays prediction has been done or not //to get todays time in UTC created function
   //we will do this by checking todays date and 0 hr entry present or not
   //if present we will do nothing
@@ -296,7 +298,7 @@ const predictAndSave24Hr = async () => {
 
     for (let hour = 0; hour < 24; hour++) {
       const { predictions, solarFeaturesArray, totalFeaturesArray } =
-        await predict(hour);
+        await predict(hour,location);
       // Build UTC time for each hour
       const now = new Date();
       const dateStr = `${now.getUTCFullYear()}-${String(
