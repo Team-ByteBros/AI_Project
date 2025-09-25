@@ -51,3 +51,8 @@ async def predict(data: PredictionInput):
         "solar_prediction": max(0,solar_pred),
         "total_prediction": max(0,total_pred)
     }
+
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
