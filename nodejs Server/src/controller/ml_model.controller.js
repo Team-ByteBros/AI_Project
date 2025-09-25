@@ -197,7 +197,7 @@ const grouped = sorted.reduce((acc, row) => {
 
 const predict = async (hour,location) => {
   try {
-     const fastApiBaseUrl = "https://ai-project-jgzr.onrender.com";
+     const fastApiBaseUrl = "https://ai-project-jgzr.onrender.com/health";
 
     // Step 1: Wake FastAPI server
     console.log("Waking FastAPI server...");
