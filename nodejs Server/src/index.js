@@ -20,13 +20,13 @@ const startServer = async () => {
 
 
 
-cron.schedule("*/12 * * * *", async () => {
-  try {
-    await axios.get(FASTAPI_URL);
-    console.log("Pinged FastAPI to keep alive");
-  } catch (err) {
-    console.error("Ping failed:", err.message);
-  }
-});
+// cron.schedule("*/12 * * * *", async () => {
+//   try {
+//     await axios.get(FASTAPI_URL);
+//     console.log("Pinged FastAPI to keep alive");
+//   } catch (err) {
+//     console.error("Ping failed:", err.message);
+//   }
+// });
 
 startServer();
