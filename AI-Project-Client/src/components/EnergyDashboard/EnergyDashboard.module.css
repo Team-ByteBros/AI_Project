@@ -1,0 +1,306 @@
+body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  min-height: 100vh;
+  background: #f5fef6;
+}
+
+.dashboard {
+  width: 100vw;
+  min-height: 100vh;
+  background: #f5fef6;
+  color: #222c23;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.title {
+  margin-top: 84px;
+  text-align: center;
+  font-size: 2.6rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: #129b5e;
+  text-shadow: 0 1px 7px #b0f5e0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto auto auto;
+  grid-template-areas: 
+    "total-card hour-card"
+    "weather-card forecast-card"
+    "today-energy today-solar"
+    "seven-day seven-day";
+  gap: 2rem;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.today_energy {
+  grid-area: today-energy;
+  border-image: linear-gradient(180deg, #34be82, #27bf7c) 1;
+}
+
+.today_solar {
+  grid-area: today-solar;
+  border-image: linear-gradient(180deg, #f5af19, #93f9b9) 1;
+}
+
+.seven_day {
+  grid-area: seven-day;
+  border-image: linear-gradient(180deg, #34be82, #27bf7c) 1;
+  min-height: 450px;
+  width: 100%;
+  padding: 2rem 1.5rem;
+}
+
+
+.card {
+  background: #fff;
+  border-radius: 1.5rem;
+  padding: 2rem 1.5rem;
+  width: 100%;
+  height: auto;
+  min-height: 300px;
+  box-shadow: 0 8px 28px 0 rgba(49,183,97,0.14), 0 1.5px 4px 0 rgba(52,190,130,0.10);
+  /* border-left: 8px solid transparent; */
+  transition: transform 0.15s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  box-sizing: border-box;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+/* .card:hover {
+  transform: translateY(-7px) scale(1.025);
+  box-shadow: 0 14px 38px 0 rgba(41,171,135,0.23), 0 3px 8px 0 rgba(52,190,130,0.21);
+} */
+
+/* Grid Area Assignments */
+.total {
+  grid-area: total-card;
+  border-image: linear-gradient(180deg, #34be82, #27bf7c) 1;
+}
+
+.hour {
+  grid-area: hour-card;
+  border-image: linear-gradient(180deg, #f5af19, #93f9b9) 1;
+}
+
+.weather {
+  grid-area: weather-card;
+  border-image: linear-gradient(180deg, #00cba9, #5af59d) 1;
+}
+
+.forecast {
+  grid-area: forecast-card;
+  border-image: linear-gradient(180deg, #129b5e, #b6f7dd) 1;
+}
+
+.today_energy {
+  grid-area: today-energy;
+}
+
+.today_solar {
+  grid-area: today-solar;
+}
+
+.seven_day {
+  grid-area: seven-day;
+}
+
+
+/* .energy_chart {
+  grid-area: energy-chart;
+  border-image: linear-gradient(180deg, #34be82, #27bf7c) 1;
+  min-height: 450px;
+  width: 100%;
+  padding: 2rem 1.5rem;
+}
+
+.energy_chart .column {
+  align-items: stretch;
+  width: 100%;
+} */
+
+/* Responsive adjustments for energy chart */
+@media (max-width: 1200px) {
+  .energy_chart {
+    min-height: 400px;
+    padding: 1.5rem 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .energy_chart {
+    min-height: 350px;
+    padding: 1.2rem 0.8rem;
+  }
+}
+
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #107045;
+  margin-bottom: 1.2rem;
+  text-transform: uppercase;
+}
+
+.icon {
+  font-size: 2.2rem;
+  margin-right: 0.9rem;
+  color: #34be82;
+  filter: drop-shadow(0 2px 5px #b6f7dd55);
+}
+
+.batteryLevel {
+  font-weight: 700;
+  font-size: 1.35rem;
+  color: #212121;
+  text-align: center;
+}
+
+.progressBarOuter {
+  width: 100%;
+  background: #e7f9ee;
+  border-radius: 1.2rem;
+  height: 1.2rem;
+  margin: 1.4rem 0 0.8rem 0;
+  overflow: hidden;
+}
+
+.progressBarInner {
+  background: linear-gradient(90deg,#16a085 25%, #34be82 95%);
+  height: 100%;
+  transition: width 0.5s;
+}
+
+.batteryStatus {
+  color: #129b5e;
+  font-size: 1.04rem;
+  text-align: center;
+  margin-top: 0.39rem;
+  font-weight: 600;
+}
+
+/* Card specific highlights */
+.solar span, .total span {
+  font-weight: 700;
+  font-size: 1.75rem;
+  color: #23a174;
+}
+
+.solar div, .total div {
+  margin-top: 0.32rem;
+}
+
+.solar .forecast, .total .usage-estimate {
+  color: #ffd54f;
+  font-weight: 500;
+  font-size: 1.09rem;
+  margin-bottom: 0.7rem;
+}
+
+.solar .trend,
+.total .grid-usage {
+  background: #f3fff6;
+  padding: 0.32rem 0.7rem;
+  border-radius: 0.7rem;
+  text-align: center;
+  font-size: 1rem;
+  color: #107045;
+  font-weight: 700;
+  margin-top: 0.6rem;
+  border: 1px solid #b6f7dd;
+}
+
+.weather .icon {
+  font-size: 2.85rem;
+  margin-bottom: 0.42rem;
+  color: #00cba9;
+}
+
+.weather .desc {
+  font-weight: 500;
+  color: #23a174;
+  font-size: 1.19rem;
+}
+
+.weather .details {
+  color: #00b37a;
+  font-size: 1.01rem;
+}
+
+.weather .next {
+  color: #18ab6d;
+  font-size: 0.99rem;
+}
+
+.weather .temp {
+  color: #129b5e;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0.45rem 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .grid {
+    grid-template-columns: 1fr;
+    grid-template-areas: 
+      "total-card"
+      "hour-card"
+      "weather-card"
+      "forecast-card"
+      "energy-chart";
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+  
+  .card {
+    min-height: 280px;
+    padding: 1.5rem 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .grid {
+    padding: 0.5rem;
+    gap: 1rem;
+  }
+  
+  .card {
+    min-height: 250px;
+    padding: 1.2rem 0.8rem;
+  }
+  
+  .title {
+    font-size: 2rem;
+    margin-top: 60px;
+  }
+}

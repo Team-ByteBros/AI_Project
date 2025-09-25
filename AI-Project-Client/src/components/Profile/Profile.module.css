@@ -1,0 +1,231 @@
+.profileCard {
+  background: #fff;
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 50px rgba(49, 183, 97, 0.1);
+  overflow: hidden;
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+  /* Ensure minimum height so the card fills more space */
+  min-height: 80vh;
+}
+
+.profileHeader {
+  background: linear-gradient(135deg, #129b5e 0%, #34be82 100%);
+  padding: 2.5rem 2rem 2rem;
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  color: white;
+  position: relative;
+}
+
+.avatarSection {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  object-fit: cover;
+}
+
+.uploadBtn {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  background: rgba(255, 255, 255, 0.9);
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  font-size: 1.2rem;
+}
+
+.uploadBtn:hover {
+  transform: scale(1.1);
+}
+
+.headerInfo h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.bio {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  opacity: 0.9;
+  line-height: 1.5;
+}
+
+.joinDate {
+  opacity: 0.8;
+  font-size: 1rem;
+}
+
+.statsSection {
+  padding: 2rem;
+  display: flex;
+  justify-content: space-around;
+  background: #f8fffe;
+  border-bottom: 1px solid #e8f5f0;
+}
+
+.stat {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.statNumber {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #129b5e;
+}
+
+.statLabel {
+  font-size: 0.9rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.detailsSection {
+  padding: 2rem;
+  background: #fff; /* Ensure white background */
+  flex-grow: 1; /* Allow this section to grow and fill space */
+}
+
+.detailsSection h2 {
+  font-size: 1.5rem;
+  color: #129b5e;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+.detailItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.detailItem:last-child {
+  border-bottom: none;
+}
+
+.detailIcon {
+  font-size: 1.3rem;
+  width: 40px;
+  height: 40px;
+  background: #f0f9f4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+}
+
+.detailInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.detailLabel {
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.detailValue {
+  font-size: 1rem;
+  color: #333;
+  font-weight: 600;
+}
+
+.actionSection {
+  padding: 2rem;
+  display: flex;
+  gap: 1rem;
+  background: #f8fffe;
+  margin-top: auto; /* Push to bottom */
+}
+
+.editBtn {
+  flex: 1;
+  padding: 0.8rem 1.5rem;
+  background: linear-gradient(90deg, #129b5e, #34be82);
+  color: white;
+  border: none;
+  border-radius: 0.8rem;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.editBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(52, 190, 130, 0.3);
+}
+
+.settingsBtn {
+  flex: 1;
+  padding: 0.8rem 1.5rem;
+  background: transparent;
+  color: #129b5e;
+  border: 2px solid #129b5e;
+  border-radius: 0.8rem;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.settingsBtn:hover {
+  background: #129b5e;
+  color: white;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .profileCard {
+    max-width: 98vw;
+    min-height: 85vh; /* Adjust for mobile */
+  }
+  
+  .profileHeader {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+  }
+  
+  .avatar {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .headerInfo h1 {
+    font-size: 1.8rem;
+  }
+  
+  .statsSection {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .actionSection {
+    flex-direction: column;
+  }
+}
